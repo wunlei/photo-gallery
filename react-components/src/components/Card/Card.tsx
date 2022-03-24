@@ -36,13 +36,22 @@ class Card extends React.Component<IProps, IState> {
         </div>
         <div className="card-footer">
           <div className="card-footer__item card__likes">
-            <LikeIcon className="card__icon" /> {this.toShortNumber(this.props.likes)}
+            <LikeIcon className="card__icon" />
+            <span className="card-footer__text card__likes-count">
+              {this.toShortNumber(this.props.likes)}
+            </span>
           </div>
           <div className="card-footer__item card__views">
-            <ViewIcon className="card__icon" /> {this.toShortNumber(this.props.views)}
+            <ViewIcon className="card__icon" />
+            <span className="card-footer__text card__views-count">
+              {this.toShortNumber(this.props.views)}
+            </span>
           </div>
           <div className="card-footer__item card__downloads">
-            <DownloadIcon className="card__icon" /> {this.toShortNumber(this.props.downloads)}
+            <DownloadIcon className="card__icon" />
+            <span className="card-footer__text card__downloads-count">
+              {this.toShortNumber(this.props.downloads)}
+            </span>
           </div>
         </div>
       </div>
