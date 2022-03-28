@@ -1,13 +1,21 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SearchBar from './SearchBar';
 
-describe('LocalStorage', () => {
+interface ILocalStorageItems {
+  [index: string]: string;
+}
+
+describe('LocalStorage Mock', () => {
   beforeEach(() => {
+    const localStorageItems: ILocalStorageItems = {};
+
     Object.defineProperty(window, 'localStorage', {
       value: {
-        getItem: jest.fn(() => null),
-        setItem: jest.fn(() => null),
+        getItem: jest.fn((key) => localStorageItems[key]),
+        setItem: jest.fn((key, value) => {
+          localStorageItems[key] = value.toString();
+        }),
       },
       writable: true,
     });
@@ -21,10 +29,19 @@ describe('LocalStorage', () => {
   it('Should call localStorage setItem on unmount', () => {
     const { container, unmount } = render(<SearchBar />);
 
-    const input = container.querySelector('.search-input') as Element;
+    const input = container.querySelector('.search-input') as HTMLInputElement;
     userEvent.type(input, 'value');
     unmount();
     expect(window.localStorage.setItem).toHaveBeenCalledTimes(1);
     expect(window.localStorage.setItem).toHaveBeenCalledWith('search', 'value');
+  });
+
+  it('Should put value from localstorage on init', () => {
+    const inputValue = 'value';
+    window.localStorage.setItem('search', inputValue);
+
+    const { container } = render(<SearchBar />);
+    const input = container.querySelector('.search-input') as HTMLInputElement;
+    expect(input.value).toEqual(inputValue);
   });
 });
