@@ -24,7 +24,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "pre-commit": "lint-staged",
-    "prepare": "cd .. && husky install .config/husky"
+    "prepare": "cd .. && husky install .config/husky",
+    "eslint": "eslint src/**/*",
+    "eslint:fix": "eslint src/**/* --fix"
   },
   "eslintConfig": {
     "extends": [
