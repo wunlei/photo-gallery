@@ -1,10 +1,13 @@
+import Select from 'components/Input/Select';
 import TextInput from 'components/Input/TextInput';
 import React from 'react';
+import countriesList from './CountriesList';
 import { IFormProps, IFormState } from './FormContribute.types';
 
 class FromContribute extends React.Component<IFormProps, IFormState> {
   form = React.createRef<HTMLFormElement>();
   name = React.createRef<HTMLInputElement>();
+  country = React.createRef<HTMLSelectElement>();
 
   constructor(props: IFormProps) {
     super(props);
@@ -46,6 +49,17 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
           reference={this.name}
           onChange={this.handleInputChange}
           novalidate={true}
+        />
+        <Select
+          id={'countrySelect'}
+          name={'country'}
+          data={countriesList}
+          required={true}
+          labelClassName={'form-select form-input'}
+          placeholder={'Choose Your Country'}
+          reference={this.country}
+          error={this.state.errors.country}
+          onChange={this.handleInputChange}
         />
         <button
           type="submit"
