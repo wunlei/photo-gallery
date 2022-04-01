@@ -2,6 +2,7 @@ import React from 'react';
 import FileInput from 'components/Input/FileInput';
 import Select from 'components/Input/Select';
 import TextInput from 'components/Input/TextInput';
+import DateInput from 'components/Input/DateInput';
 import countriesList from './CountriesList';
 import { IFormProps, IFormState } from './FormContribute.types';
 
@@ -10,6 +11,7 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
   name = React.createRef<HTMLInputElement>();
   country = React.createRef<HTMLSelectElement>();
   fileInput = React.createRef<HTMLInputElement>();
+  date = React.createRef<HTMLInputElement>();
 
   constructor(props: IFormProps) {
     super(props);
@@ -74,6 +76,17 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
           accept={'image/*'}
           reference={this.fileInput}
           onChange={this.handleInputChange}
+        />
+        <DateInput
+          id={'inputDate'}
+          name={'date'}
+          reference={this.date}
+          required={true}
+          labelContent={'Photo taken date:'}
+          labelClassName={'form-label'}
+          inputClassName={'input_date form-input'}
+          onChange={this.handleInputChange}
+          error={this.state.errors.date}
         />
         <button
           type="submit"
