@@ -1,6 +1,7 @@
+import React from 'react';
+import FileInput from 'components/Input/FileInput';
 import Select from 'components/Input/Select';
 import TextInput from 'components/Input/TextInput';
-import React from 'react';
 import countriesList from './CountriesList';
 import { IFormProps, IFormState } from './FormContribute.types';
 
@@ -8,6 +9,7 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
   form = React.createRef<HTMLFormElement>();
   name = React.createRef<HTMLInputElement>();
   country = React.createRef<HTMLSelectElement>();
+  fileInput = React.createRef<HTMLInputElement>();
 
   constructor(props: IFormProps) {
     super(props);
@@ -59,6 +61,18 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
           placeholder={'Choose Your Country'}
           reference={this.country}
           error={this.state.errors.country}
+          onChange={this.handleInputChange}
+        />
+        <FileInput
+          id={'inputFile'}
+          name={'file'}
+          labelContent={'Upload your photo:'}
+          labelClassName={'form-label'}
+          inputClassName={'input_file'}
+          required={true}
+          error={this.state.errors.file}
+          accept={'image/*'}
+          reference={this.fileInput}
           onChange={this.handleInputChange}
         />
         <button
