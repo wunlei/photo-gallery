@@ -3,6 +3,7 @@ import FileInput from 'components/Input/FileInput';
 import Select from 'components/Input/Select';
 import TextInput from 'components/Input/TextInput';
 import DateInput from 'components/Input/DateInput';
+import RadioInput from 'components/Input/RadioInput';
 import countriesList from './CountriesList';
 import { IFormProps, IFormState } from './FormContribute.types';
 
@@ -12,6 +13,8 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
   country = React.createRef<HTMLSelectElement>();
   fileInput = React.createRef<HTMLInputElement>();
   date = React.createRef<HTMLInputElement>();
+  filterSafe = React.createRef<HTMLInputElement>();
+  filterRestricted = React.createRef<HTMLInputElement>();
 
   constructor(props: IFormProps) {
     super(props);
@@ -88,6 +91,34 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
           onChange={this.handleInputChange}
           error={this.state.errors.date}
         />
+        <fieldset className="form-fieldset fieldset_safety form-input-container">
+          <legend className="fieldset_safety__legend">Photo safety level:</legend>
+          <RadioInput
+            id={'filterSafe'}
+            name={'filter'}
+            labelContent={'Safe'}
+            labelClassName={'label_radio'}
+            inputClassName={'input_radio'}
+            required={true}
+            reference={this.filterSafe}
+            onChange={this.handleInputChange}
+          />
+          <RadioInput
+            id={'filterRestricted'}
+            name={'filter'}
+            labelContent={'Restricted'}
+            labelClassName={'label_radio'}
+            inputClassName={'input_radio'}
+            required={true}
+            reference={this.filterRestricted}
+            onChange={this.handleInputChange}
+          />
+          {this.state.errors.filter ? (
+            <div className="form-error-message">{this.state.errors.filter}</div>
+          ) : (
+            ''
+          )}
+        </fieldset>
         <button
           type="submit"
           disabled={this.state.isSubmitBtnDisabled}
