@@ -7,6 +7,14 @@ import RadioInput from 'components/Input/RadioInput';
 import CheckboxInput from 'components/Input/CheckboxInput';
 import countriesList from './CountriesList';
 import { IFormProps, IFormState } from './FormContribute.types';
+import {
+  getCheckboxValidity,
+  getCountryValidity,
+  getDateValidity,
+  getFileValidity,
+  getNameValidity,
+  getRadioGroupValidity,
+} from 'utils/FormValidation';
 
 class FromContribute extends React.Component<IFormProps, IFormState> {
   form = React.createRef<HTMLFormElement>();
@@ -39,9 +47,35 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    this.setState((state) => {
+      const currErrors = {
+        name: getNameValidity(this.name.current),
+        country: getCountryValidity(this.country.current),
+        file: getFileValidity(this.fileInput.current),
+        date: getDateValidity(this.date.current),
+        filter: getRadioGroupValidity(this.filterSafe.current, this.filterRestricted.current),
+        agreement: getCheckboxValidity(this.agreement.current),
+      };
+
+      const isAllValid = Object.values(currErrors).every((el) => el === '');
+      let currSubmitBtnText = state.submitBtnText;
+      if (isAllValid) {
+        currSubmitBtnText = 'Successfully submitted!';
+        this.handleSubmitBtnUpdate();
+        this.form.current?.reset();
+      }
+      return { errors: currErrors, isSubmitBtnDisabled: true, submitBtnText: currSubmitBtnText };
+    });
   }
+
   handleInputChange() {
     this.setState({ isSubmitBtnDisabled: false });
+  }
+
+  handleSubmitBtnUpdate() {
+    setTimeout(() => {
+      this.setState({ submitBtnText: 'Submit' });
+    }, 3000);
   }
 
   render() {
