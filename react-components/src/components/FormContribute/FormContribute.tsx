@@ -4,6 +4,7 @@ import Select from 'components/Input/Select';
 import TextInput from 'components/Input/TextInput';
 import DateInput from 'components/Input/DateInput';
 import RadioInput from 'components/Input/RadioInput';
+import CheckboxInput from 'components/Input/CheckboxInput';
 import countriesList from './CountriesList';
 import { IFormProps, IFormState } from './FormContribute.types';
 
@@ -15,6 +16,7 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
   date = React.createRef<HTMLInputElement>();
   filterSafe = React.createRef<HTMLInputElement>();
   filterRestricted = React.createRef<HTMLInputElement>();
+  agreement = React.createRef<HTMLInputElement>();
 
   constructor(props: IFormProps) {
     super(props);
@@ -119,6 +121,17 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
             ''
           )}
         </fieldset>
+        <CheckboxInput
+          id={'agreementCheck'}
+          name={'agreement'}
+          labelContent={'I understand and agree submission guidelines.'}
+          labelClassName={'label_checkbox'}
+          inputClassName={'input_checkbox'}
+          required={true}
+          error={this.state.errors.agreement}
+          reference={this.agreement}
+          onChange={this.handleInputChange}
+        />
         <button
           type="submit"
           disabled={this.state.isSubmitBtnDisabled}
