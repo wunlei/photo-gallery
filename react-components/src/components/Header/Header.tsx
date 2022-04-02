@@ -17,6 +17,14 @@ function Header() {
           className={({ isActive }) =>
             'header-nav__link' + (isActive ? ' header-nav__link_active' : '')
           }
+          to="/contribute"
+        >
+          Contribute
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            'header-nav__link' + (isActive ? ' header-nav__link_active' : '')
+          }
           to="/about-us"
         >
           About Us
