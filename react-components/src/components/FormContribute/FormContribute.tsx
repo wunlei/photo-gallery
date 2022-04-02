@@ -31,6 +31,7 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmitBtnUpdate = this.handleSubmitBtnUpdate.bind(this);
 
     this.state = {
       errors: {
@@ -69,7 +70,12 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
     });
   }
 
-  handleInputChange() {
+  handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    if (typeof event.target.name === 'string') {
+      const currErrors = { ...this.state.errors };
+      currErrors[event.target.name] = '';
+      this.setState({ errors: currErrors });
+    }
     this.setState({ isSubmitBtnDisabled: false });
   }
 
