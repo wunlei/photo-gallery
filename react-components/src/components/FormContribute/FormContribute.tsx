@@ -1,12 +1,10 @@
 import React from 'react';
+import CheckboxInput from 'components/Input/CheckboxInput';
+import DateInput from 'components/Input/DateInput';
 import FileInput from 'components/Input/FileInput';
+import RadioInput from 'components/Input/RadioInput';
 import Select from 'components/Input/Select';
 import TextInput from 'components/Input/TextInput';
-import DateInput from 'components/Input/DateInput';
-import RadioInput from 'components/Input/RadioInput';
-import CheckboxInput from 'components/Input/CheckboxInput';
-import countriesList from './CountriesList';
-import { IFormProps, IFormState } from './FormContribute.types';
 import {
   getCheckboxValidity,
   getCountryValidity,
@@ -15,6 +13,8 @@ import {
   getNameValidity,
   getRadioGroupValidity,
 } from 'utils/FormValidation';
+import { IFormProps, IFormState } from './FormContribute.types';
+import countriesList from './CountriesList';
 import './FormContribute.scss';
 
 class FromContribute extends React.Component<IFormProps, IFormState> {
@@ -62,12 +62,33 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
       const isAllValid = Object.values(currErrors).every((el) => el === '');
       let currSubmitBtnText = state.submitBtnText;
       if (isAllValid) {
+        this.updateContributedCards();
         currSubmitBtnText = 'Successfully submitted!';
         this.handleSubmitBtnUpdate();
         this.form.current?.reset();
       }
       return { errors: currErrors, isSubmitBtnDisabled: true, submitBtnText: currSubmitBtnText };
     });
+  }
+
+  updateContributedCards() {
+    const currentFilter = this.filterSafe.current?.checked ? 'Safe' : 'Restricted';
+
+    let url = '';
+    const files = this.fileInput.current?.files;
+    if (files) {
+      url = URL.createObjectURL(files[0]);
+    }
+
+    const card = {
+      name: this.name.current?.value || '',
+      country: this.country.current?.value || '',
+      imgUrl: url,
+      date: this.date.current?.value || '',
+      filter: currentFilter,
+    };
+
+    this.props.handleCardsUpdate(card);
   }
 
   handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
@@ -177,6 +198,7 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
           type="submit"
           disabled={this.state.isSubmitBtnDisabled}
           className={'form_btn btn_submit'}
+          onClick={this.handleSubmitBtnUpdate}
         >
           {this.state.submitBtnText}
         </button>

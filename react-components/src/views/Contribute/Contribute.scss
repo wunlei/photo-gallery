@@ -1,0 +1,16 @@
+.page-contribute-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 1em;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+.cards-contribute-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
+  width: 100%;
+}

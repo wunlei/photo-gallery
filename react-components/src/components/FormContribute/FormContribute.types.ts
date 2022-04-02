@@ -1,3 +1,11 @@
+export interface ICardContribute {
+  name: string;
+  country: string;
+  imgUrl: string;
+  date: string;
+  filter: string;
+}
+
 export interface FormErrors {
   [index: string]: string | undefined;
   name: string;
@@ -8,8 +16,9 @@ export interface FormErrors {
   filter: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface IFormProps {}
+export interface IFormProps {
+  handleCardsUpdate: (data: ICardContribute) => void;
+}
 
 export interface IFormState {
   errors: FormErrors;
