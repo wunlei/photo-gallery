@@ -7,7 +7,7 @@ function CardContribute(props: ICardContribute) {
       <img className="card__img card-contribute__img" src={props.imgUrl} alt="" />
       <div className="card-body">
         <div className="card__text card__author">{props.name}</div>
-        <div className="card__text">
+        <div className="card__text card__description">
           {props.country}, {props.date}
         </div>
         <div className="card__text card__filter">Safety level: {props.filter}</div>
