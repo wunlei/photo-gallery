@@ -18,6 +18,10 @@ test('app rendering/navigating', () => {
   userEvent.click(screen.getByText(/main/i), leftClick);
   searchInput = screen.getByPlaceholderText(/search/i);
   expect(searchInput).toBeInTheDocument();
+
+  userEvent.click(screen.getByText(/Contribute/i), leftClick);
+  const form = document.querySelector('form');
+  expect(form).toBeInTheDocument();
 });
 
 test('load non-existing rout', () => {
