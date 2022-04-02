@@ -15,6 +15,7 @@ import {
   getNameValidity,
   getRadioGroupValidity,
 } from 'utils/FormValidation';
+import './FormContribute.scss';
 
 class FromContribute extends React.Component<IFormProps, IFormState> {
   form = React.createRef<HTMLFormElement>();
