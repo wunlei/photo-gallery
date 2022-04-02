@@ -17,7 +17,7 @@ import { IFormProps, IFormState } from './FormContribute.types';
 import countriesList from './CountriesList';
 import './FormContribute.scss';
 
-class FromContribute extends React.Component<IFormProps, IFormState> {
+class FormContribute extends React.Component<IFormProps, IFormState> {
   form = React.createRef<HTMLFormElement>();
   name = React.createRef<HTMLInputElement>();
   country = React.createRef<HTMLSelectElement>();
@@ -207,4 +207,4 @@ class FromContribute extends React.Component<IFormProps, IFormState> {
   }
 }
 
-export default FromContribute;
+export default FormContribute;

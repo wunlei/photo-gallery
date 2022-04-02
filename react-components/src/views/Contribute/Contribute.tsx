@@ -1,6 +1,6 @@
 import React from 'react';
 import CardContribute from 'components/CardContribute/CardContribute';
-import FromContribute from 'components/FormContribute/FormContribute';
+import FormContribute from 'components/FormContribute/FormContribute';
 import { ICardContribute } from 'components/FormContribute/FormContribute.types';
 
 import './Contribute.scss';
@@ -32,7 +32,7 @@ class Contribute extends React.Component<Props, IState> {
       <main className="page page-contribute">
         <h3 className="page__title">Contribute</h3>
         <section className="page-contribute-content">
-          <FromContribute handleCardsUpdate={this.handleCardsUpdate} />
+          <FormContribute handleCardsUpdate={this.handleCardsUpdate} />
           <div className="cards-contribute-container">
             {this.state.inputCards.map((el) => (
               <CardContribute
