@@ -1,58 +1,25 @@
 import React from 'react';
+import { CardModal } from 'components/CardModal/CardModal';
+import { Portal } from 'components/Portal/Portal';
+import { getPhotoDetails } from 'api/Api';
+import { PropsCard, StateCard } from './Card.types';
 import './Card.scss';
 
-import { ReactComponent as LikeIcon } from '../../assets/icons/like.svg';
-import { ReactComponent as ViewIcon } from '../../assets/icons/view.svg';
-import { ReactComponent as DownloadIcon } from '../../assets/icons/download.svg';
-
-interface IProps {
-  imgUrl: string;
-  description: string;
-  likes: number;
-  views: number;
-  downloads: number;
-  author: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface IState {}
-
-class Card extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
+class Card extends React.Component<PropsCard, StateCard> {
+  constructor(props: PropsCard) {
     super(props);
-  }
-
-  toShortNumber(num: number) {
-    return num.toLocaleString('en-GB', { notation: 'compact', compactDisplay: 'short' });
+    this.state = {
+      isActive: false,
+      data: { downloads: 0, likes: 0, location: '', tags: '' },
+    };
   }
 
   render() {
     return (
       <div className="card">
-        <img className="card__img" src={this.props.imgUrl} alt="" />
+        <img className="card__img" src={this.props.imgUrl} alt={this.props.description} />
         <div className="card-body">
-          <div className="card__text card__description">{this.props.description}</div>
           <div className="card__text card__author">by {this.props.author}</div>
-        </div>
-        <div className="card-footer">
-          <div className="card-footer__item card__likes">
-            <LikeIcon className="card__icon" />
-            <span className="card-footer__text card__likes-count">
-              {this.toShortNumber(this.props.likes)}
-            </span>
-          </div>
-          <div className="card-footer__item card__views">
-            <ViewIcon className="card__icon" />
-            <span className="card-footer__text card__views-count">
-              {this.toShortNumber(this.props.views)}
-            </span>
-          </div>
-          <div className="card-footer__item card__downloads">
-            <DownloadIcon className="card__icon" />
-            <span className="card-footer__text card__downloads-count">
-              {this.toShortNumber(this.props.downloads)}
-            </span>
-          </div>
         </div>
       </div>
     );

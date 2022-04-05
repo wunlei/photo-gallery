@@ -1,16 +1,10 @@
 import React from 'react';
-import './SearchBar.scss';
 import { ReactComponent as SearchIcon } from '../../assets/icons/search-icon.svg';
+import { PropsSearchBar, StateSearchBar } from './SearchBar.types';
+import './SearchBar.scss';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface IProps {}
-
-interface IState {
-  inputValue: string;
-}
-
-class SearchBar extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
+class SearchBar extends React.Component<PropsSearchBar, StateSearchBar> {
+  constructor(props: PropsSearchBar) {
     super(props);
     this.state = {
       inputValue: this.setUpValue(),
@@ -46,9 +40,11 @@ class SearchBar extends React.Component<IProps, IState> {
               type="text"
               name="search"
               id="search"
-              onInput={this.handleInput}
+              onChange={this.handleInput}
+              onKeyUp={this.props.handleInputChange}
               value={this.state.inputValue}
               placeholder="Search..."
+              ref={this.props.reference}
             />
           </label>
           <button className="search-btn">
