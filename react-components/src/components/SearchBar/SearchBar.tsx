@@ -41,13 +41,12 @@ class SearchBar extends React.Component<PropsSearchBar, StateSearchBar> {
               name="search"
               id="search"
               onChange={this.handleInput}
-              onKeyUp={this.props.handleInputChange}
               value={this.state.inputValue}
               placeholder="Search..."
               ref={this.props.reference}
             />
           </label>
-          <button className="search-btn">
+          <button className="search-btn" onClick={this.props.handleInputChange}>
             <SearchIcon className="search-btn__icon" />
           </button>
         </div>

@@ -1,5 +1,5 @@
 export interface PropsSearchBar {
-  handleInputChange: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  handleInputChange: () => void;
   reference: React.RefObject<HTMLInputElement>;
 }
 
