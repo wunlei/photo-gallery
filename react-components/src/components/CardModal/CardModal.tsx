@@ -12,7 +12,6 @@ export class CardModal extends React.Component<CardModalProps, CardModalState> {
   }
 
   toShortNumber(num = 0) {
-    console.log(num);
     return num.toLocaleString('en-GB', { notation: 'compact', compactDisplay: 'short' });
   }
 
@@ -20,7 +19,11 @@ export class CardModal extends React.Component<CardModalProps, CardModalState> {
     return (
       <>
         <div className="overlay">
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-card"
+            onClick={(e) => e.stopPropagation()}
+            data-testid={'card-modal'}
+          >
             <button className="modal__btn_close" onClick={this.props.handleClose}></button>
             <img className="modal-card__img" src={this.props.imgUrl} alt="" />
             <div className="modal-card-body">

@@ -44,9 +44,14 @@ class SearchBar extends React.Component<PropsSearchBar, StateSearchBar> {
               value={this.state.inputValue}
               placeholder="Search..."
               ref={this.props.reference}
+              data-testid={'search-bar'}
             />
           </label>
-          <button className="search-btn" onClick={this.props.handleInputChange}>
+          <button
+            className="search-btn"
+            onClick={this.props.handleInputChange}
+            data-testid={'search-btn'}
+          >
             <SearchIcon className="search-btn__icon" />
           </button>
         </div>

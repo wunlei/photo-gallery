@@ -1,50 +1,33 @@
-import { render } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import MainPage from 'views/Main/Main';
-import Card from './Card';
-import CardsData from './CardsData';
+import { setupServer } from 'msw/node';
+import { SearchData } from 'mock/SearchData';
+import { handlers } from 'mock/ApiHandlers';
 
-test('renders all cards', () => {
-  render(<MainPage />);
-  const cardsCount = document.body.querySelectorAll('.card').length;
-  const cardsDataCount = CardsData.length;
-  expect(cardsCount).toEqual(cardsDataCount);
-});
+describe('API Test', () => {
+  const server = setupServer(...handlers);
 
-test('renders all card items', () => {
-  const data = CardsData[0];
+  beforeAll(() => server.listen());
 
-  function toShortNumber(num: number) {
-    return num.toLocaleString('en-GB', { notation: 'compact', compactDisplay: 'short' });
-  }
+  afterEach(() => {
+    server.resetHandlers();
+    server.close();
+  });
 
-  const { container } = render(
-    <Card
-      imgUrl={data.urls.regular}
-      description={data.alt_description}
-      likes={data.likes}
-      views={data.views}
-      downloads={data.downloads}
-      author={data.user.name}
-    />
-  );
+  afterAll(() => server.close());
 
-  const image = container.querySelector('.card__img');
-  expect(image).toBeInTheDocument();
-  expect((image as HTMLImageElement).src).toEqual(data.urls.regular);
+  test('Get data and render cards', async () => {
+    render(<MainPage />);
+    const searchBar = screen.getByTestId('search-bar') as HTMLInputElement;
+    userEvent.type(searchBar, 'test');
+    expect(searchBar).toBeInTheDocument();
+    const btn = screen.getByTestId('search-btn');
+    expect(btn).toBeInTheDocument();
+    userEvent.click(btn);
 
-  const description = container.querySelector('.card__description');
-  expect(description).toBeInTheDocument();
-  expect(description?.textContent).toEqual(data.alt_description);
-
-  const likes = container.querySelector('.card__likes-count');
-  expect(likes).toBeInTheDocument();
-  expect(likes?.textContent).toEqual(toShortNumber(data.likes));
-
-  const views = container.querySelector('.card__views-count');
-  expect(views).toBeInTheDocument();
-  expect(views?.textContent).toEqual(toShortNumber(data.views));
-
-  const downloads = container.querySelector('.card__downloads-count');
-  expect(downloads).toBeInTheDocument();
-  expect(downloads?.textContent).toEqual(toShortNumber(data.downloads));
+    await waitFor(() =>
+      expect(screen.getByAltText(SearchData[0].alt_description)).toBeInTheDocument()
+    );
+  });
 });
