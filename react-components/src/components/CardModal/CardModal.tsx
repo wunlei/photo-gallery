@@ -17,50 +17,44 @@ export class CardModal extends React.Component<CardModalProps, CardModalState> {
 
   render() {
     return (
-      <>
-        <div className="overlay">
-          <div
-            className="modal-card"
-            onClick={(e) => e.stopPropagation()}
-            data-testid={'card-modal'}
-          >
-            <button className="modal__btn_close" onClick={this.props.handleClose}></button>
-            <img className="modal-card__img" src={this.props.imgUrl} alt="" />
-            <div className="modal-card-body">
-              <div className="modal-card__text card__description">{this.props.description}</div>
-              <div className="modal-card__text card__author">by {this.props.author}</div>
+      <div className="overlay">
+        <div className="modal-card" onClick={(e) => e.stopPropagation()} data-testid={'card-modal'}>
+          <button className="modal__btn_close" onClick={this.props.handleClose}></button>
+          <img className="modal-card__img" src={this.props.imgUrl} alt="" />
+          <div className="modal-card-body">
+            <div className="modal-card__text card__description">{this.props.description}</div>
+            <div className="modal-card__text card__author">by {this.props.author}</div>
+          </div>
+          <div className="modal-card-footer">
+            <div className="modal-card-footer__item card__location">
+              <PinIcon className="modal-card__icon" />
+              <span className="modal-card-footer__text card__location-text">
+                {this.props.location || 'Unknown'}
+              </span>
             </div>
-            <div className="modal-card-footer">
-              <div className="modal-card-footer__item card__location">
-                <PinIcon className="modal-card__icon" />
-                <span className="modal-card-footer__text card__location-text">
-                  {this.props.location || 'Unknown'}
-                </span>
-              </div>
 
-              <div className="modal-card-footer__item card__likes">
-                <LikeIcon className="modal-card__icon" />
-                <span className="modal-card-footer__text card__likes-count">
-                  {this.toShortNumber(this.props.likes)}
-                </span>
-              </div>
+            <div className="modal-card-footer__item card__likes">
+              <LikeIcon className="modal-card__icon" />
+              <span className="modal-card-footer__text card__likes-count">
+                {this.toShortNumber(this.props.likes)}
+              </span>
+            </div>
 
-              <div className="modal-card-footer__item card__downloads">
-                <DownloadIcon className="modal-card__icon" />
-                <span className="modal-card-footer__text card__downloads-count">
-                  {this.toShortNumber(this.props.downloads)}
-                </span>
-              </div>
-              <div className="modal-card-footer__item card__tags">
-                <TagIcon className="modal-card__icon" />
-                <span className="modal-card-footer__text card__tags-text">
-                  {this.props.tags || 'Unknown'}
-                </span>
-              </div>
+            <div className="modal-card-footer__item card__downloads">
+              <DownloadIcon className="modal-card__icon" />
+              <span className="modal-card-footer__text card__downloads-count">
+                {this.toShortNumber(this.props.downloads)}
+              </span>
+            </div>
+            <div className="modal-card-footer__item card__tags">
+              <TagIcon className="modal-card__icon" />
+              <span className="modal-card-footer__text card__tags-text">
+                {this.props.tags || 'Unknown'}
+              </span>
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }

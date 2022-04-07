@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import MainPage from 'views/Main/Main';
 import { setupServer } from 'msw/node';
 import { SearchData } from 'mock/SearchData';
 import { handlers } from 'mock/ApiHandlers';
+import AppRouter from 'components/AppRouter/AppRouter';
 
 describe('API Test', () => {
   const server = setupServer(...handlers);
@@ -18,7 +18,7 @@ describe('API Test', () => {
   afterAll(() => server.close());
 
   test('Get data and render cards', async () => {
-    render(<MainPage />);
+    render(<AppRouter></AppRouter>);
     const searchBar = screen.getByTestId('search-bar') as HTMLInputElement;
     userEvent.type(searchBar, 'test');
     expect(searchBar).toBeInTheDocument();
@@ -29,5 +29,12 @@ describe('API Test', () => {
     await waitFor(() =>
       expect(screen.getByAltText(SearchData[0].alt_description)).toBeInTheDocument()
     );
+
+    const card = document.querySelector('.card') as HTMLDivElement;
+    userEvent.click(card);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('card-modal')).toBeInTheDocument();
+    });
   });
 });
