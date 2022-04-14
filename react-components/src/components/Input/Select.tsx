@@ -1,23 +1,19 @@
-import React from 'react';
 import { IInputProps } from './Inputs.types';
 
 interface IProps extends IInputProps {
   placeholder?: string;
   data: string[];
-  reference: React.RefObject<HTMLSelectElement>;
 }
 
 function Select(props: IProps) {
   return (
     <div className="form-input-container">
       <select
-        name={props.name}
         id={props.id}
         required={props.required}
-        ref={props.reference}
         className={props.labelClassName}
-        onChange={props.onChange}
         defaultValue=""
+        {...props.register(props.name, { required: props.required, onChange: props.onChange })}
       >
         <option disabled hidden value="">
           {props.placeholder}
@@ -29,7 +25,15 @@ function Select(props: IProps) {
         ))}
       </select>
 
-      {props.error ? <div className="form-error-message">{props.error}</div> : ''}
+      {props.error ? (
+        props.error?.type === 'required' ? (
+          <div className="form-error-message">This field is required</div>
+        ) : (
+          <div className="form-error-message">{props.error.message}</div>
+        )
+      ) : (
+        ''
+      )}
     </div>
   );
 }

@@ -1,11 +1,7 @@
-import React from 'react';
+import { getDateValidityMessage } from 'utils/FormValidation';
 import { IInputProps } from './Inputs.types';
 
-interface IProps extends IInputProps {
-  reference: React.RefObject<HTMLInputElement>;
-}
-
-function DateInput(props: IProps) {
+function DateInput(props: IInputProps) {
   return (
     <div className="form-input-container">
       <label htmlFor={props.id} className={props.labelClassName}>
@@ -13,14 +9,28 @@ function DateInput(props: IProps) {
         <input
           type="date"
           id={props.id}
-          name={props.name}
           className={props.inputClassName}
           required={props.required}
-          ref={props.reference}
-          onChange={props.onChange}
+          {...props.register(props.name, {
+            required: props.required,
+            onChange: props.onChange,
+            validate: (value) => {
+              if (typeof value === 'string') {
+                return getDateValidityMessage(value);
+              }
+            },
+          })}
         />
       </label>
-      {props.error ? <div className="form-error-message">{props.error}</div> : ''}
+      {props.error ? (
+        props.error?.type === 'required' ? (
+          <div className="form-error-message">This field is required</div>
+        ) : (
+          <div className="form-error-message">{props.error.message}</div>
+        )
+      ) : (
+        ''
+      )}
     </div>
   );
 }

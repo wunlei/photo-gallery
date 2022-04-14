@@ -1,9 +1,7 @@
-import React from 'react';
 import { IInputProps } from './Inputs.types';
 
 interface IProps extends IInputProps {
   accept?: string;
-  reference: React.RefObject<HTMLInputElement>;
 }
 
 function FileInput(props: IProps) {
@@ -14,15 +12,21 @@ function FileInput(props: IProps) {
         <input
           type="file"
           id={props.id}
-          name={props.name}
           className={props.inputClassName}
           required={props.required}
-          ref={props.reference}
-          onChange={props.onChange}
           accept={props.accept}
+          {...props.register(props.name, { required: props.required, onChange: props.onChange })}
         />
       </label>
-      {props.error ? <div className="form-error-message">{props.error}</div> : ''}
+      {props.error ? (
+        props.error?.type === 'required' ? (
+          <div className="form-error-message">This field is required</div>
+        ) : (
+          <div className="form-error-message">{props.error.message}</div>
+        )
+      ) : (
+        ''
+      )}
     </div>
   );
 }

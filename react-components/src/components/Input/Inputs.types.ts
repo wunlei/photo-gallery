@@ -1,3 +1,15 @@
+import { FieldError, UseFormRegister } from 'react-hook-form';
+
+export interface IFormValues {
+  name: string;
+  country: string;
+  file: FileList;
+  date: string;
+  agreementCheck: boolean;
+  filter: string;
+  [index: string]: string | boolean | FileList;
+}
+
 export interface IInputProps {
   id: string;
   name: string;
@@ -5,6 +17,7 @@ export interface IInputProps {
   labelClassName?: string;
   labelContent?: string;
   required?: boolean;
-  error?: string;
+  error?: FieldError;
   onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  register: UseFormRegister<IFormValues>;
 }

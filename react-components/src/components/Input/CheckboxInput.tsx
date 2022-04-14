@@ -1,9 +1,7 @@
-import React from 'react';
 import { IInputProps } from './Inputs.types';
 
 interface IProps extends IInputProps {
   checked?: boolean;
-  reference: React.RefObject<HTMLInputElement>;
 }
 
 function CheckboxInput(props: IProps) {
@@ -13,16 +11,22 @@ function CheckboxInput(props: IProps) {
         <input
           type="checkbox"
           id={props.id}
-          name={props.name}
           className={props.inputClassName}
           required={props.required}
-          ref={props.reference}
-          onChange={props.onChange}
           checked={props.checked}
+          {...props.register(props.id, { required: props.required, onChange: props.onChange })}
         />
         {props.labelContent}
       </label>
-      {props.error ? <div className="form-error-message">{props.error}</div> : ''}
+      {props.error ? (
+        props.error?.type === 'required' ? (
+          <div className="form-error-message">This field is required</div>
+        ) : (
+          <div className="form-error-message">{props.error.message}</div>
+        )
+      ) : (
+        ''
+      )}
     </div>
   );
 }

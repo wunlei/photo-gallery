@@ -1,9 +1,8 @@
-import React from 'react';
 import { IInputProps } from './Inputs.types';
 
 interface IProps extends IInputProps {
   checked?: boolean;
-  reference: React.RefObject<HTMLInputElement>;
+  value: string;
 }
 
 function RadioInput(props: IProps) {
@@ -12,12 +11,11 @@ function RadioInput(props: IProps) {
       <input
         type="radio"
         id={props.id}
-        name={props.name}
         className={props.inputClassName}
         required={props.required}
-        ref={props.reference}
-        onChange={props.onChange}
+        value={props.value}
         checked={props.checked}
+        {...props.register(props.name, { required: props.required, onChange: props.onChange })}
       />
       {props.labelContent}
     </label>

@@ -1,210 +1,179 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import CheckboxInput from 'components/Input/CheckboxInput';
 import DateInput from 'components/Input/DateInput';
 import FileInput from 'components/Input/FileInput';
 import RadioInput from 'components/Input/RadioInput';
 import Select from 'components/Input/Select';
 import TextInput from 'components/Input/TextInput';
-import {
-  getCheckboxValidity,
-  getCountryValidity,
-  getDateValidity,
-  getFileValidity,
-  getNameValidity,
-  getRadioGroupValidity,
-} from 'utils/FormValidation';
-import { IFormProps, IFormState } from './FormContribute.types';
+import { IFormValues } from 'components/Input/Inputs.types';
+import { IFormProps } from './FormContribute.types';
+import { getDateValidityMessage, getNameValidityMessage } from 'utils/FormValidation';
 import countriesList from './CountriesList';
 import './FormContribute.scss';
 
-class FormContribute extends React.Component<IFormProps, IFormState> {
-  form = React.createRef<HTMLFormElement>();
-  name = React.createRef<HTMLInputElement>();
-  country = React.createRef<HTMLSelectElement>();
-  fileInput = React.createRef<HTMLInputElement>();
-  date = React.createRef<HTMLInputElement>();
-  filterSafe = React.createRef<HTMLInputElement>();
-  filterRestricted = React.createRef<HTMLInputElement>();
-  agreement = React.createRef<HTMLInputElement>();
+function FormContribute(props: IFormProps) {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    clearErrors,
+    reset,
+    formState: { errors },
+  } = useForm<IFormValues>();
 
-  constructor(props: IFormProps) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleSubmitBtnUpdate = this.handleSubmitBtnUpdate.bind(this);
+  const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState<boolean>(true);
+  const [submitBtnText, setSubmitBtnText] = useState<string>('Submit');
 
-    this.state = {
-      errors: {
-        name: '',
-        country: '',
-        file: '',
-        date: '',
-        agreement: '',
-        filter: '',
-      },
-      isSubmitBtnDisabled: true,
-      submitBtnText: 'Submit',
-    };
-  }
+  const onSubmit: SubmitHandler<IFormValues> = (data) => {
+    setIsSubmitBtnDisabled(true);
+    setError('name', { type: 'manual', message: getNameValidityMessage(data.name) });
+    setError('date', { type: 'manual', message: getDateValidityMessage(data.date) });
 
-  handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    this.setState((state) => {
-      const currErrors = {
-        name: getNameValidity(this.name.current),
-        country: getCountryValidity(this.country.current),
-        file: getFileValidity(this.fileInput.current),
-        date: getDateValidity(this.date.current),
-        filter: getRadioGroupValidity(this.filterSafe.current, this.filterRestricted.current),
-        agreement: getCheckboxValidity(this.agreement.current),
-      };
+    if (data) {
+      updateContributedCards(data);
+      setSubmitBtnText('Successfully submitted!');
+      handleSubmitBtnUpdate();
+      reset();
+    }
+  };
 
-      const isAllValid = Object.values(currErrors).every((el) => el === '');
-      let currSubmitBtnText = state.submitBtnText;
-      if (isAllValid) {
-        this.updateContributedCards();
-        currSubmitBtnText = 'Successfully submitted!';
-        this.handleSubmitBtnUpdate();
-        this.form.current?.reset();
-      }
-      return { errors: currErrors, isSubmitBtnDisabled: true, submitBtnText: currSubmitBtnText };
-    });
-  }
-
-  updateContributedCards() {
-    const currentFilter = this.filterSafe.current?.checked ? 'Safe' : 'Restricted';
-
+  function updateContributedCards(data: IFormValues) {
     let url = '';
-    const files = this.fileInput.current?.files;
+    const files = data.file;
     if (files) {
       url = URL.createObjectURL(files[0]);
     }
 
     const card = {
-      name: this.name.current?.value || '',
-      country: this.country.current?.value || '',
+      name: data.name,
+      country: data.country,
       imgUrl: url,
-      date: this.date.current?.value || '',
-      filter: currentFilter,
+      date: data.date,
+      filter: data.filter,
     };
-
-    this.props.handleCardsUpdate(card);
+    props.handleCardsUpdate(card);
   }
 
-  handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     if (typeof event.target.name === 'string') {
-      const currErrors = { ...this.state.errors };
-      currErrors[event.target.name] = '';
-      this.setState({ errors: currErrors });
+      clearErrors(event.target.name);
     }
-    this.setState({ isSubmitBtnDisabled: false });
+    setIsSubmitBtnDisabled(false);
   }
 
-  handleSubmitBtnUpdate() {
+  function handleSubmitBtnUpdate() {
     setTimeout(() => {
-      this.setState({ submitBtnText: 'Submit' });
+      setSubmitBtnText('Submit');
     }, 3000);
   }
 
-  render() {
-    return (
-      <form className="form-contribute" onSubmit={this.handleSubmit} noValidate ref={this.form}>
-        <TextInput
-          id={'inputName'}
-          name={'name'}
-          labelContent={'Your Name:'}
-          labelClassName={'form-label'}
-          inputClassName={'input_text form-input'}
+  return (
+    <form className="form-contribute" onSubmit={handleSubmit(onSubmit)} noValidate>
+      <TextInput
+        id={'inputName'}
+        name={'name'}
+        labelContent={'Your Name:'}
+        labelClassName={'form-label'}
+        inputClassName={'input_text form-input'}
+        required={true}
+        error={errors.name}
+        onChange={handleInputChange}
+        novalidate={true}
+        register={register}
+        data-testid={'input-name'}
+      />
+      <Select
+        id={'countrySelect'}
+        name={'country'}
+        data={countriesList}
+        required={true}
+        labelClassName={'form-select form-input'}
+        placeholder={'Choose Your Country'}
+        error={errors.country}
+        onChange={handleInputChange}
+        register={register}
+      />
+      <FileInput
+        id={'inputFile'}
+        name={'file'}
+        labelContent={'Upload your photo:'}
+        labelClassName={'form-label'}
+        inputClassName={'input_file'}
+        required={true}
+        error={errors.file}
+        accept={'image/*'}
+        onChange={handleInputChange}
+        register={register}
+      />
+      <DateInput
+        id={'inputDate'}
+        name={'date'}
+        required={true}
+        labelContent={'Photo taken date:'}
+        labelClassName={'form-label'}
+        inputClassName={'input_date form-input'}
+        onChange={handleInputChange}
+        error={errors.date}
+        register={register}
+      />
+      <fieldset className="form-fieldset fieldset_safety form-input-container">
+        <legend className="fieldset_safety__legend">Photo safety level:</legend>
+        <RadioInput
+          id={'filterSafe'}
+          name={'filter'}
+          labelContent={'Safe'}
+          value={'safe'}
+          labelClassName={'label_radio'}
+          inputClassName={'input_radio'}
           required={true}
-          error={this.state.errors.name}
-          reference={this.name}
-          onChange={this.handleInputChange}
-          novalidate={true}
+          onChange={handleInputChange}
+          register={register}
         />
-        <Select
-          id={'countrySelect'}
-          name={'country'}
-          data={countriesList}
+        <RadioInput
+          id={'filterRestricted'}
+          name={'filter'}
+          labelContent={'Restricted'}
+          value={'restricted'}
+          labelClassName={'label_radio'}
+          inputClassName={'input_radio'}
           required={true}
-          labelClassName={'form-select form-input'}
-          placeholder={'Choose Your Country'}
-          reference={this.country}
-          error={this.state.errors.country}
-          onChange={this.handleInputChange}
+          onChange={handleInputChange}
+          register={register}
         />
-        <FileInput
-          id={'inputFile'}
-          name={'file'}
-          labelContent={'Upload your photo:'}
-          labelClassName={'form-label'}
-          inputClassName={'input_file'}
-          required={true}
-          error={this.state.errors.file}
-          accept={'image/*'}
-          reference={this.fileInput}
-          onChange={this.handleInputChange}
-        />
-        <DateInput
-          id={'inputDate'}
-          name={'date'}
-          reference={this.date}
-          required={true}
-          labelContent={'Photo taken date:'}
-          labelClassName={'form-label'}
-          inputClassName={'input_date form-input'}
-          onChange={this.handleInputChange}
-          error={this.state.errors.date}
-        />
-        <fieldset className="form-fieldset fieldset_safety form-input-container">
-          <legend className="fieldset_safety__legend">Photo safety level:</legend>
-          <RadioInput
-            id={'filterSafe'}
-            name={'filter'}
-            labelContent={'Safe'}
-            labelClassName={'label_radio'}
-            inputClassName={'input_radio'}
-            required={true}
-            reference={this.filterSafe}
-            onChange={this.handleInputChange}
-          />
-          <RadioInput
-            id={'filterRestricted'}
-            name={'filter'}
-            labelContent={'Restricted'}
-            labelClassName={'label_radio'}
-            inputClassName={'input_radio'}
-            required={true}
-            reference={this.filterRestricted}
-            onChange={this.handleInputChange}
-          />
-          {this.state.errors.filter ? (
-            <div className="form-error-message">{this.state.errors.filter}</div>
+        {errors.filter ? (
+          errors.filter?.type === 'required' ? (
+            <div className="form-error-message">This field is required</div>
           ) : (
-            ''
-          )}
-        </fieldset>
-        <CheckboxInput
-          id={'agreementCheck'}
-          name={'agreement'}
-          labelContent={'I understand and agree submission guidelines.'}
-          labelClassName={'label_checkbox'}
-          inputClassName={'input_checkbox'}
-          required={true}
-          error={this.state.errors.agreement}
-          reference={this.agreement}
-          onChange={this.handleInputChange}
-        />
-        <button
-          type="submit"
-          disabled={this.state.isSubmitBtnDisabled}
-          className={'form_btn btn_submit'}
-          onClick={this.handleSubmitBtnUpdate}
-        >
-          {this.state.submitBtnText}
-        </button>
-      </form>
-    );
-  }
+            <div className="form-error-message">{errors.filter.message}</div>
+          )
+        ) : (
+          ''
+        )}
+      </fieldset>
+      <CheckboxInput
+        id={'agreementCheck'}
+        name={'agreement'}
+        labelContent={'I understand and agree submission guidelines.'}
+        labelClassName={'label_checkbox'}
+        inputClassName={'input_checkbox'}
+        required={true}
+        error={errors.agreementCheck}
+        onChange={handleInputChange}
+        register={register}
+      />
+      <button
+        type="submit"
+        disabled={isSubmitBtnDisabled}
+        className={'form_btn btn_submit'}
+        onClick={() => {
+          setIsSubmitBtnDisabled(true);
+        }}
+      >
+        {submitBtnText}
+      </button>
+    </form>
+  );
 }
 
 export default FormContribute;
