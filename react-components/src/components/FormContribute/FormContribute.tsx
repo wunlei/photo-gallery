@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import CheckboxInput from 'components/Input/CheckboxInput';
 import DateInput from 'components/Input/DateInput';
@@ -26,6 +26,7 @@ function FormContribute(props: IFormProps) {
   });
 
   const [submitBtnText, setSubmitBtnText] = useState<string>('Submit');
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<IFormValues> = (data) => {
     setError('name', { type: 'manual', message: getNameValidityMessage(data.name) });
@@ -67,6 +68,18 @@ function FormContribute(props: IFormProps) {
       setSubmitBtnText('Submit');
     }, 3000);
   }
+
+  function checkIsCanSubmit() {
+    if (Object.keys(errors).length === 0) {
+      setIsSubmitDisabled(false);
+    } else {
+      setIsSubmitDisabled(true);
+    }
+  }
+
+  useEffect(() => {
+    checkIsCanSubmit();
+  });
 
   return (
     <form className="form-contribute" onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -161,7 +174,11 @@ function FormContribute(props: IFormProps) {
         onChange={handleInputChange}
         register={register}
       />
-      <button type="submit" disabled={!isDirty} className={'form_btn btn_submit'}>
+      <button
+        type="submit"
+        disabled={!isDirty || isSubmitDisabled}
+        className={'form_btn btn_submit'}
+      >
         {submitBtnText}
       </button>
     </form>
