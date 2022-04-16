@@ -10,7 +10,7 @@ export interface StateCard {
   data: PhotoData;
 }
 
-interface PhotoData {
+export interface PhotoData {
   downloads: number;
   likes: number;
   location: string;

@@ -1,32 +1,24 @@
-import React from 'react';
+import { useState } from 'react';
 import { CardModal } from 'components/CardModal/CardModal';
 import { Portal } from 'components/Portal/Portal';
 import { getPhotoDetails } from 'api/Api';
-import { PropsCard, StateCard } from './Card.types';
+import { PhotoData, PropsCard } from './Card.types';
 import './Card.scss';
 
-class Card extends React.Component<PropsCard, StateCard> {
-  constructor(props: PropsCard) {
-    super(props);
-    this.state = {
-      isActive: false,
-      data: { downloads: 0, likes: 0, location: '', tags: '' },
-    };
-    this.setPhotoData = this.setPhotoData.bind(this);
-    this.toggleModal = this.toggleModal.bind(this);
-  }
+function Card(props: PropsCard) {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const emptyData = { downloads: 0, likes: 0, location: '', tags: '' };
+  const [cardData, setCardData] = useState<PhotoData>(emptyData);
 
-  toggleModal() {
-    if (!this.state.isActive) {
-      this.setPhotoData();
+  async function toggleModal() {
+    if (!isModalOpen) {
+      await setPhotoData();
     }
-    this.setState((state) => ({
-      isActive: !state.isActive,
-    }));
+    setIsModalOpen(!isModalOpen);
   }
 
-  async setPhotoData() {
-    const response = await getPhotoDetails(this.props.id);
+  async function setPhotoData() {
+    const response = await getPhotoDetails(props.id);
     const data = {
       downloads: response.downloads,
       likes: response.likes,
@@ -43,33 +35,32 @@ class Card extends React.Component<PropsCard, StateCard> {
       .slice(0, 3)
       .join(', ');
 
-    this.setState({ data: data });
+    setCardData(data);
   }
 
-  render() {
-    return (
-      <div className="card" onClick={this.toggleModal}>
-        <img className="card__img" src={this.props.imgUrl} alt={this.props.description} />
-        <div className="card-body">
-          <div className="card__text card__author">by {this.props.author}</div>
-        </div>
-
-        {this.state.isActive ? (
-          <Portal>
-            <CardModal
-              imgUrl={this.props.imgUrl}
-              description={this.props.description}
-              likes={this.state.data.likes}
-              downloads={this.state.data.downloads}
-              author={this.props.author}
-              handleClose={this.toggleModal}
-              location={this.state.data.location}
-              tags={this.state.data.tags}
-            />
-          </Portal>
-        ) : null}
+  return (
+    <div className="card" onClick={toggleModal}>
+      <img className="card__img" src={props.imgUrl} alt={props.description} />
+      <div className="card-body">
+        <div className="card__text card__author">by {props.author}</div>
       </div>
-    );
-  }
+
+      {isModalOpen ? (
+        <Portal>
+          <CardModal
+            imgUrl={props.imgUrl}
+            description={props.description}
+            likes={cardData.likes}
+            downloads={cardData.downloads}
+            author={props.author}
+            handleClose={toggleModal}
+            location={cardData.location}
+            tags={cardData.tags}
+          />
+        </Portal>
+      ) : null}
+    </div>
+  );
 }
+
 export default Card;
