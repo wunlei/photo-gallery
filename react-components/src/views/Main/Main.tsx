@@ -7,18 +7,16 @@ import { ApiSearchData } from 'api/Api.types';
 import './Main.scss';
 
 function MainPage() {
-  const query = React.createRef<HTMLInputElement>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<ApiSearchData[]>([]);
 
-  async function handleInputChange() {
-    if (query.current) {
-      const value = query.current.value.trim();
-      if (value) {
+  async function handleInputChange(value: string) {
+    if (value) {
+      const trimmedValue = value.trim();
+      if (trimmedValue) {
         setIsLoading(true);
 
-        console.log(query.current.value);
-        const data = await getSearchResults(query.current.value);
+        const data = await getSearchResults(trimmedValue);
 
         setIsLoading(false);
         setData(data.results);
@@ -29,12 +27,7 @@ function MainPage() {
   return (
     <main className="page page-main">
       <h3 className="page__title">Search for images</h3>
-      <SearchBar
-        handleInputChange={() => {
-          handleInputChange();
-        }}
-        reference={query}
-      />
+      <SearchBar handleInputChange={handleInputChange} />
       <div className="cards-container">
         {isLoading ? <Loader /> : null}
         {data.map((data) => (

@@ -1,6 +1,5 @@
 export interface PropsSearchBar {
-  handleInputChange: () => void;
-  reference: React.RefObject<HTMLInputElement>;
+  handleInputChange: (value: string) => void;
 }
 
 export interface StateSearchBar {

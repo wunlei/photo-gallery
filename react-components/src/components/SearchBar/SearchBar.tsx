@@ -1,18 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ReactComponent as SearchIcon } from '../../assets/icons/search-icon.svg';
-import { PropsSearchBar, StateSearchBar } from './SearchBar.types';
+import { PropsSearchBar } from './SearchBar.types';
 import './SearchBar.scss';
 
-class SearchBar extends React.Component<PropsSearchBar, StateSearchBar> {
-  constructor(props: PropsSearchBar) {
-    super(props);
-    this.state = {
-      inputValue: this.setUpValue(),
-    };
-    this.handleInput = this.handleInput.bind(this);
-  }
+function SearchBar(props: PropsSearchBar) {
+  const [searchValue, setSearchValue] = useState<string>(setUpValue);
 
-  setUpValue() {
+  function setUpValue() {
     const searchValue = localStorage.getItem('search');
     if (searchValue) {
       return searchValue;
@@ -20,44 +14,41 @@ class SearchBar extends React.Component<PropsSearchBar, StateSearchBar> {
     return '';
   }
 
-  componentWillUnmount() {
-    localStorage.setItem('search', this.state.inputValue);
+  function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchValue(e.target.value);
   }
 
-  handleInput(e: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({
-      inputValue: e.target.value,
-    });
-  }
+  useEffect(() => {
+    return localStorage.setItem('search', searchValue);
+  }, [searchValue]);
 
-  render() {
-    return (
-      <div className="search-bar-container">
-        <div className="search-input-container">
-          <label className="search-label" htmlFor="search">
-            <input
-              className="search-input"
-              type="text"
-              name="search"
-              id="search"
-              onChange={this.handleInput}
-              value={this.state.inputValue}
-              placeholder="Search..."
-              ref={this.props.reference}
-              data-testid={'search-bar'}
-            />
-          </label>
-          <button
-            className="search-btn"
-            onClick={this.props.handleInputChange}
-            data-testid={'search-btn'}
-          >
-            <SearchIcon className="search-btn__icon" />
-          </button>
-        </div>
+  return (
+    <div className="search-bar-container">
+      <div className="search-input-container">
+        <label className="search-label" htmlFor="search">
+          <input
+            className="search-input"
+            type="text"
+            name="search"
+            id="search"
+            onChange={handleInput}
+            value={searchValue}
+            placeholder="Search..."
+            data-testid={'search-bar'}
+          />
+        </label>
+        <button
+          className="search-btn"
+          onClick={() => {
+            props.handleInputChange(searchValue);
+          }}
+          data-testid={'search-btn'}
+        >
+          <SearchIcon className="search-btn__icon" />
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default SearchBar;
