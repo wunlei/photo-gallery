@@ -19,14 +19,15 @@ function FormContribute(props: IFormProps) {
     setError,
     clearErrors,
     reset,
-    formState: { errors },
-  } = useForm<IFormValues>();
+    formState: { errors, isDirty },
+  } = useForm<IFormValues>({
+    reValidateMode: 'onSubmit',
+    shouldFocusError: false,
+  });
 
-  const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState<boolean>(true);
   const [submitBtnText, setSubmitBtnText] = useState<string>('Submit');
 
   const onSubmit: SubmitHandler<IFormValues> = (data) => {
-    setIsSubmitBtnDisabled(true);
     setError('name', { type: 'manual', message: getNameValidityMessage(data.name) });
     setError('date', { type: 'manual', message: getDateValidityMessage(data.date) });
 
@@ -59,7 +60,6 @@ function FormContribute(props: IFormProps) {
     if (typeof event.target.name === 'string') {
       clearErrors(event.target.name);
     }
-    setIsSubmitBtnDisabled(false);
   }
 
   function handleSubmitBtnUpdate() {
@@ -79,7 +79,6 @@ function FormContribute(props: IFormProps) {
         required={true}
         error={errors.name}
         onChange={handleInputChange}
-        novalidate={true}
         register={register}
         data-testid={'input-name'}
       />
@@ -162,14 +161,7 @@ function FormContribute(props: IFormProps) {
         onChange={handleInputChange}
         register={register}
       />
-      <button
-        type="submit"
-        disabled={isSubmitBtnDisabled}
-        className={'form_btn btn_submit'}
-        onClick={() => {
-          setIsSubmitBtnDisabled(true);
-        }}
-      >
+      <button type="submit" disabled={!isDirty} className={'form_btn btn_submit'}>
         {submitBtnText}
       </button>
     </form>

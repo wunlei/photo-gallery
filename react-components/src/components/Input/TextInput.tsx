@@ -1,9 +1,7 @@
 import { getNameValidityMessage } from 'utils/FormValidation';
 import { IInputProps } from './Inputs.types';
 
-interface IProps extends IInputProps {
-  novalidate: boolean;
-}
+type IProps = IInputProps;
 
 function TextInput(props: IProps) {
   return (
