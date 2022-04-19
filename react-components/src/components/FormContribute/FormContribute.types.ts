@@ -15,13 +15,3 @@ export interface FormErrors {
   agreement: string;
   filter: string;
 }
-
-export interface IFormProps {
-  handleCardsUpdate: (data: ICardContribute) => void;
-}
-
-export interface IFormState {
-  errors: FormErrors;
-  isSubmitBtnDisabled: boolean;
-  submitBtnText: string;
-}

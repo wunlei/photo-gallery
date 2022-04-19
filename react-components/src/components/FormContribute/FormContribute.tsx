@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import CheckboxInput from 'components/Input/CheckboxInput';
 import DateInput from 'components/Input/DateInput';
@@ -7,12 +7,12 @@ import RadioInput from 'components/Input/RadioInput';
 import Select from 'components/Input/Select';
 import TextInput from 'components/Input/TextInput';
 import { IFormValues } from 'components/Input/Inputs.types';
-import { IFormProps } from './FormContribute.types';
 import { getDateValidityMessage, getNameValidityMessage } from 'utils/FormValidation';
+import { AppContext } from 'contexts/AppContext';
 import countriesList from './CountriesList';
 import './FormContribute.scss';
 
-function FormContribute(props: IFormProps) {
+function FormContribute() {
   const {
     register,
     handleSubmit,
@@ -27,6 +27,7 @@ function FormContribute(props: IFormProps) {
 
   const [submitBtnText, setSubmitBtnText] = useState<string>('Submit');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
+  const { updateFormData } = useContext(AppContext);
 
   const onSubmit: SubmitHandler<IFormValues> = (data) => {
     setError('name', { type: 'manual', message: getNameValidityMessage(data.name) });
@@ -54,7 +55,8 @@ function FormContribute(props: IFormProps) {
       date: data.date,
       filter: data.filter,
     };
-    props.handleCardsUpdate(card);
+
+    updateFormData(card);
   }
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {

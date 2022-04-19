@@ -1,13 +1,16 @@
 import { Outlet } from 'react-router-dom';
 import Header from 'components/Header/Header';
 import './App.scss';
+import { AppContextProvider } from 'contexts/AppContext';
 
 function App() {
   return (
-    <div className="app">
-      <Header />
-      <Outlet />
-    </div>
+    <AppContextProvider>
+      <div className="app">
+        <Header />
+        <Outlet />
+      </div>
+    </AppContextProvider>
   );
 }
 

@@ -1,25 +1,23 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Card from 'components/Card/Card';
 import Loader from 'components/Loader/Loader';
 import SearchBar from 'components/SearchBar/SearchBar';
 import { getSearchResults } from 'api/Api';
-import { ApiSearchData } from 'api/Api.types';
+import { AppContext } from 'contexts/AppContext';
 import './Main.scss';
 
 function MainPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [data, setData] = useState<ApiSearchData[]>([]);
+  const { searchData, updateSearchData } = useContext(AppContext);
 
   async function handleInputChange(value: string) {
     if (value) {
       const trimmedValue = value.trim();
       if (trimmedValue) {
         setIsLoading(true);
-
         const data = await getSearchResults(trimmedValue);
-
         setIsLoading(false);
-        setData(data.results);
+        updateSearchData(data.results);
       }
     }
   }
@@ -30,7 +28,7 @@ function MainPage() {
       <SearchBar handleInputChange={handleInputChange} />
       <div className="cards-container">
         {isLoading ? <Loader /> : null}
-        {data.map((data) => (
+        {searchData.map((data) => (
           <Card
             key={data.id}
             imgUrl={data.urls.regular}
