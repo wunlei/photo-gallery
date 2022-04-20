@@ -1,4 +1,4 @@
-import { ApiSearchData } from 'api/Api.types';
+import { ApiResponse, ApiSearchData } from 'api/Api.types';
 import { PhotoData } from 'components/Card/Card.types';
 import { ICardContribute } from 'components/FormContribute/FormContribute.types';
 
@@ -8,12 +8,12 @@ export interface IAppContextProvider {
 
 export interface IAppContext {
   formData: Array<ICardContribute>;
-  searchData: Array<ApiSearchData>;
+  searchData: ApiResponse;
   searchQuery: string;
   filtersState: IFiltersState;
   photoData: PhotoData;
   updateFormData: (value: ICardContribute) => void;
-  updateSearchData: (value: ApiSearchData[], sorting: string) => void;
+  updateSearchData: (value: ApiResponse, sorting: string) => void;
   filtersDispatch: (value: DispatchValue) => void;
   updatePhotoData: (value: PhotoData) => void;
   updateSearchQuery: (value: string) => void;
@@ -29,6 +29,7 @@ export interface IFiltersState {
   orientation: string;
   order: string;
   elemCount: string;
+  pageNum: string;
 }
 
 export type Reducer<State, Action> = (state: State, action: Action) => State;

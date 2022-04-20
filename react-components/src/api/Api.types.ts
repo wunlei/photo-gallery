@@ -36,5 +36,7 @@ interface TagData {
 }
 
 export interface ApiResponse {
+  total: number;
+  total_pages: number;
   results: ApiSearchData[];
 }

@@ -3,8 +3,8 @@ import { ApiPhotoData, ApiResponse } from './Api.types';
 
 export async function getSearchResults(
   query: string,
-  pageNum = 1,
-  pageLimit = 10,
+  pageNum = '1',
+  pageLimit = '10',
   order_by = 'relevant',
   orientation?: string
 ): Promise<ApiResponse> {

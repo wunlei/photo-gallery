@@ -1,5 +1,5 @@
 import React, { useReducer, useState } from 'react';
-import { ApiSearchData } from 'api/Api.types';
+import { ApiResponse, ApiSearchData } from 'api/Api.types';
 import { ICardContribute } from 'components/FormContribute/FormContribute.types';
 import { createContext } from 'react';
 import {
@@ -16,6 +16,13 @@ const filtersInitialState = {
   orientation: '',
   order: 'relevant',
   elemCount: '10',
+  pageNum: '1',
+};
+
+const searchDataInitialState = {
+  total: 1,
+  total_pages: 1,
+  results: [],
 };
 
 function sortSearchData(data: ApiSearchData[], sorting: string) {
@@ -31,7 +38,7 @@ function sortSearchData(data: ApiSearchData[], sorting: string) {
 
 export const AppContext = createContext<IAppContext>({
   formData: [],
-  searchData: [],
+  searchData: searchDataInitialState,
   searchQuery: '',
   photoData: {},
   filtersState: filtersInitialState,
@@ -52,6 +59,8 @@ function reducer(state: IFiltersState, action: DispatchValue) {
       return { ...state, order: action.value };
     case 'elemCount':
       return { ...state, elemCount: action.value };
+    case 'pageNum':
+      return { ...state, pageNum: action.value };
     default:
       throw new Error();
   }
@@ -60,7 +69,7 @@ function reducer(state: IFiltersState, action: DispatchValue) {
 export function AppContextProvider(props: IAppContextProvider) {
   const [formData, setFormData] = useState<Array<ICardContribute>>([]);
 
-  const [searchData, setSearchData] = useState<Array<ApiSearchData>>([]);
+  const [searchData, setSearchData] = useState<ApiResponse>(searchDataInitialState);
 
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -82,9 +91,12 @@ export function AppContextProvider(props: IAppContextProvider) {
         return [...prevState, value];
       });
     },
-    updateSearchData: (value: ApiSearchData[], sorting: string) => {
-      const data = sortSearchData(value, sorting);
-      setSearchData(data);
+    updateSearchData: (value: ApiResponse, sorting: string) => {
+      const sortedData = sortSearchData(value.results, sorting);
+      setSearchData({
+        ...value,
+        results: sortedData,
+      });
     },
     filtersDispatch: (action: DispatchValue) => {
       filtersDispatch(action);

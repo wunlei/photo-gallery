@@ -5,6 +5,7 @@ import SearchBar from 'components/SearchBar/SearchBar';
 import { getSearchResults } from 'api/Api';
 import { AppContext } from 'contexts/AppContext';
 import Select from 'components/Input/Select';
+import Pagination from 'components/Pagination/Pagination';
 import './Main.scss';
 
 function MainPage() {
@@ -15,6 +16,7 @@ function MainPage() {
     filtersState,
     filtersDispatch,
     searchQuery,
+    photoData,
     updateSearchQuery,
   } = useContext(AppContext);
 
@@ -25,14 +27,14 @@ function MainPage() {
         setIsLoading(true);
         const data = await getSearchResults(
           trimmedValue,
-          1,
-          Number(filtersState.elemCount),
+          filtersState.pageNum,
+          filtersState.elemCount,
           filtersState.order,
           filtersState.orientation
         );
         setIsLoading(false);
         updateSearchQuery(trimmedValue);
-        updateSearchData(data.results, filtersState.sorting);
+        updateSearchData(data, filtersState.sorting);
       }
     }
   }
@@ -40,12 +42,12 @@ function MainPage() {
   async function handleFiltersChange() {
     const data = await getSearchResults(
       searchQuery,
-      1,
-      Number(filtersState.elemCount),
+      filtersState.pageNum,
+      filtersState.elemCount,
       filtersState.order,
       filtersState.orientation
     );
-    updateSearchData(data.results, filtersState.sorting);
+    updateSearchData(data, filtersState.sorting);
   }
 
   useEffect(() => {
@@ -106,9 +108,16 @@ function MainPage() {
           value={filtersState.elemCount}
         />
       </div>
+      <Pagination
+        currentPage={filtersState.pageNum}
+        pageCount={searchData.total_pages || 1}
+        handlePageUpdate={(value) => {
+          filtersDispatch({ type: 'pageNum', value: value });
+        }}
+      />
       <div className="cards-container">
         {isLoading ? <Loader /> : null}
-        {searchData.map((data) => (
+        {searchData.results.map((data) => (
           <Card
             key={data.id}
             imgUrl={data.urls.regular}
