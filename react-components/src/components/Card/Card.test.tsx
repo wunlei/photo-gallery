@@ -34,7 +34,7 @@ describe('API Test', () => {
     userEvent.click(card);
 
     await waitFor(() => {
-      expect(screen.getByTestId('card-modal')).toBeInTheDocument();
+      expect(screen.getByAltText(SearchData[0].alt_description)).toBeInTheDocument();
     });
   });
 });

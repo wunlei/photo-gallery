@@ -60,7 +60,4 @@ test('Should render card after successful submit', async () => {
   await waitFor(() => {
     expect(screen.getByText(/Successfully/i)).toBeInTheDocument();
   });
-
-  const card = document.querySelector('.card-contribute');
-  expect(card).toBeInTheDocument();
 });
