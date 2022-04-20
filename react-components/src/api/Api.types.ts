@@ -3,15 +3,16 @@ export interface ApiSearchData {
   urls: URLData;
   user: UserData;
   alt_description: string;
+  likes: number;
 }
 
-interface UserData {
+export interface UserData {
   id: string;
   username: string;
   name: string;
 }
 
-interface URLData {
+export interface URLData {
   regular: string;
 }
 
@@ -20,6 +21,9 @@ export interface ApiPhotoData {
   likes: number;
   location: LocationData;
   tags: Array<TagData>;
+  user: UserData;
+  alt_description: string;
+  urls: URLData;
 }
 
 interface LocationData {

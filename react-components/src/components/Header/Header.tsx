@@ -1,7 +1,9 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import './Header.scss';
 
 function Header() {
+  const params = useParams();
+
   return (
     <header className="header">
       <nav className="header-nav">
@@ -29,6 +31,16 @@ function Header() {
         >
           About Us
         </NavLink>
+        {params.photoId && (
+          <NavLink
+            className={({ isActive }) =>
+              'header-nav__link' + (isActive ? ' header-nav__link_active' : '')
+            }
+            to={`/photo/${params.photoId}`}
+          >
+            Photo
+          </NavLink>
+        )}
       </nav>
     </header>
   );

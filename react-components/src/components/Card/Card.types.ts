@@ -11,8 +11,11 @@ export interface StateCard {
 }
 
 export interface PhotoData {
-  downloads: number;
-  likes: number;
-  location: string;
-  tags: string;
+  downloads?: number;
+  likes?: number;
+  location?: string;
+  tags?: string;
+  urls?: string;
+  user?: string;
+  alt_description?: string;
 }

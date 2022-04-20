@@ -4,7 +4,9 @@ import { ApiPhotoData, ApiResponse } from './Api.types';
 export async function getSearchResults(
   query: string,
   pageNum = 1,
-  pageLimit = 10
+  pageLimit = 10,
+  order_by = 'relevant',
+  orientation?: string
 ): Promise<ApiResponse> {
   const url = new URL(Endpoints.search, BASE_URL_API);
 
@@ -19,6 +21,10 @@ export async function getSearchResults(
   url.searchParams.append('per_page', pageLimit.toString());
   url.searchParams.append('page', pageNum.toString());
   url.searchParams.append('query', query);
+  url.searchParams.append('order_by', order_by);
+  if (orientation) {
+    url.searchParams.append('orientation', orientation);
+  }
 
   return fetch(url.toString(), options)
     .then((resp) => resp.json())

@@ -1,29 +1,30 @@
-import { useState } from 'react';
-import { CardModal } from 'components/CardModal/CardModal';
-import { Portal } from 'components/Portal/Portal';
 import { getPhotoDetails } from 'api/Api';
-import { PhotoData, PropsCard } from './Card.types';
+import { PropsCard } from './Card.types';
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import './Card.scss';
 
 function Card(props: PropsCard) {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const emptyData = { downloads: 0, likes: 0, location: '', tags: '' };
-  const [cardData, setCardData] = useState<PhotoData>(emptyData);
+  const navigate = useNavigate();
+  const { updatePhotoData } = useContext(AppContext);
 
-  async function toggleModal() {
-    if (!isModalOpen) {
-      await setPhotoData();
-    }
-    setIsModalOpen(!isModalOpen);
+  async function togglePhotoPage() {
+    await setPhotoData();
+    navigate(`photo/${props.id}`);
   }
 
   async function setPhotoData() {
     const response = await getPhotoDetails(props.id);
+
     const data = {
       downloads: response.downloads,
       likes: response.likes,
       location: '',
       tags: '',
+      urls: response.urls.regular,
+      user: response.user.name,
+      alt_description: response.alt_description,
     };
 
     data.location = [response.location.city, response.location.country]
@@ -35,30 +36,15 @@ function Card(props: PropsCard) {
       .slice(0, 3)
       .join(', ');
 
-    setCardData(data);
+    updatePhotoData(data);
   }
 
   return (
-    <div className="card" onClick={toggleModal}>
+    <div className="card" onClick={togglePhotoPage}>
       <img className="card__img" src={props.imgUrl} alt={props.description} />
       <div className="card-body">
         <div className="card__text card__author">by {props.author}</div>
       </div>
-
-      {isModalOpen ? (
-        <Portal>
-          <CardModal
-            imgUrl={props.imgUrl}
-            description={props.description}
-            likes={cardData.likes}
-            downloads={cardData.downloads}
-            author={props.author}
-            handleClose={toggleModal}
-            location={cardData.location}
-            tags={cardData.tags}
-          />
-        </Portal>
-      ) : null}
     </div>
   );
 }

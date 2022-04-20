@@ -4,7 +4,7 @@ import CheckboxInput from 'components/Input/CheckboxInput';
 import DateInput from 'components/Input/DateInput';
 import FileInput from 'components/Input/FileInput';
 import RadioInput from 'components/Input/RadioInput';
-import Select from 'components/Input/Select';
+import FormSelect from 'components/Input/FormSelect';
 import TextInput from 'components/Input/TextInput';
 import { IFormValues } from 'components/Input/Inputs.types';
 import { getDateValidityMessage, getNameValidityMessage } from 'utils/FormValidation';
@@ -97,7 +97,7 @@ function FormContribute() {
         register={register}
         data-testid={'input-name'}
       />
-      <Select
+      <FormSelect
         id={'countrySelect'}
         name={'country'}
         data={countriesList}
