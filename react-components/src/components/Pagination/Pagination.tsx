@@ -36,9 +36,9 @@ function Pagination(props: PaginationProps) {
     const active = Number(props.currentPage);
 
     let coeff = -2;
-    if (active === 1) {
+    if (active < 3) {
       coeff = 0;
-    } else if (active === props.pageCount) {
+    } else if (active > props.pageCount - 2) {
       coeff -= 2;
     }
 
