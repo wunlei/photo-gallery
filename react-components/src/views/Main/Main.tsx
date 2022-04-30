@@ -1,60 +1,74 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Card from 'components/Card/Card';
 import Loader from 'components/Loader/Loader';
 import SearchBar from 'components/SearchBar/SearchBar';
-import { getSearchResults } from 'api/Api';
-import { AppContext } from 'contexts/AppContext';
 import Select from 'components/Input/Select';
 import Pagination from 'components/Pagination/Pagination';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from 'store/store';
+import { ApiResponse } from 'api/Api.types';
+import { fetchPhotos } from 'store/actions/apiAction';
+import {
+  updateElemCount,
+  updateOrder,
+  updateOrientation,
+  updatePageNumber,
+  updateSearchData,
+  updateSearchQuery,
+  updateSorting,
+} from 'store/slices/appSlice';
 import './Main.scss';
+import { sortSearchData } from 'utils/sortSearchData';
 
 function MainPage() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {
-    searchData,
-    updateSearchData,
-    filtersState,
-    filtersDispatch,
-    searchQuery,
-    photoData,
-    updateSearchQuery,
-  } = useContext(AppContext);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const isLoading = useSelector<RootState, boolean>((state) => state.app.isLoading);
+
+  const searchData = useSelector<RootState, ApiResponse>((state) => state.app.searchData);
+
+  const orientation = useSelector<RootState, string>((state) => state.app.orientation);
+  const order = useSelector<RootState, string>((state) => state.app.order);
+  const sorting = useSelector<RootState, string>((state) => state.app.sorting);
+  const elemCount = useSelector<RootState, string>((state) => state.app.elemCount);
+  const pageNum = useSelector<RootState, string>((state) => state.app.pageNum);
+  const searchQuery = useSelector<RootState, string>((state) => state.app.searchQuery);
+
+  const error = useSelector<RootState, string | undefined>((state) => state.app.error);
 
   async function handleInputChange(value: string) {
     if (value) {
       const trimmedValue = value.trim();
       if (trimmedValue) {
-        setIsLoading(true);
-        const data = await getSearchResults(
-          trimmedValue,
-          filtersState.pageNum,
-          filtersState.elemCount,
-          filtersState.order,
-          filtersState.orientation
-        );
-        setIsLoading(false);
-        updateSearchQuery(trimmedValue);
-        updateSearchData(data, filtersState.sorting);
+        dispatch(updateSearchQuery(trimmedValue));
       }
     }
   }
 
-  async function handleFiltersChange() {
-    const data = await getSearchResults(
-      searchQuery,
-      filtersState.pageNum,
-      filtersState.elemCount,
-      filtersState.order,
-      filtersState.orientation
+  async function handleFiltersChange(pageNum: string) {
+    await dispatch(
+      fetchPhotos({
+        query: searchQuery,
+        pageNum: pageNum,
+        pageLimit: elemCount,
+        order: order,
+        orientation: orientation,
+      })
     );
-    updateSearchData(data, filtersState.sorting);
   }
 
   useEffect(() => {
     if (searchQuery) {
-      handleFiltersChange();
+      handleFiltersChange('1');
+      dispatch(updatePageNumber('1'));
     }
-  }, [filtersState]);
+  }, [order, orientation, elemCount, searchQuery]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      handleFiltersChange(pageNum);
+    }
+  }, [pageNum]);
 
   return (
     <main className="page page-main">
@@ -68,10 +82,12 @@ function MainPage() {
           id={''}
           name={''}
           onChange={(e) => {
-            filtersDispatch({ type: 'sorting', value: e.target.value });
+            dispatch(updateSorting(e.target.value));
+            const data = sortSearchData(searchData.results, e.target.value);
+            dispatch(updateSearchData({ ...searchData, results: data }));
           }}
           placeholder={'Select sorting'}
-          value={filtersState.sorting}
+          value={sorting}
         />
         <Select
           labelClassName="form-select form-input"
@@ -80,9 +96,9 @@ function MainPage() {
           id={''}
           name={''}
           onChange={(e) => {
-            filtersDispatch({ type: 'orientation', value: e.target.value });
+            dispatch(updateOrientation(e.target.value));
           }}
-          value={filtersState.orientation}
+          value={orientation}
           placeholder={'Select orientation'}
         />
         <Select
@@ -92,9 +108,9 @@ function MainPage() {
           id={''}
           name={''}
           onChange={(e) => {
-            filtersDispatch({ type: 'order', value: e.target.value });
+            dispatch(updateOrder(e.target.value));
           }}
-          value={filtersState.order}
+          value={order}
         />
         <Select
           labelClassName="form-select form-input"
@@ -103,29 +119,35 @@ function MainPage() {
           id={''}
           name={''}
           onChange={(e) => {
-            filtersDispatch({ type: 'elemCount', value: e.target.value });
+            dispatch(updateElemCount(e.target.value));
           }}
-          value={filtersState.elemCount}
+          value={elemCount}
         />
       </div>
       <Pagination
-        currentPage={filtersState.pageNum}
+        currentPage={pageNum}
         pageCount={searchData.total_pages || 1}
         handlePageUpdate={(value) => {
-          filtersDispatch({ type: 'pageNum', value: value });
+          dispatch(updatePageNumber(value));
         }}
       />
       <div className="cards-container">
         {isLoading ? <Loader /> : null}
-        {searchData.results.map((data) => (
-          <Card
-            key={data.id}
-            imgUrl={data.urls.regular}
-            author={data.user.name}
-            id={data.id}
-            description={data.alt_description}
-          />
-        ))}
+        {error ? (
+          <div>Something went wrong</div>
+        ) : searchData.results.length === 0 ? (
+          <div>No results</div>
+        ) : (
+          searchData.results.map((data) => (
+            <Card
+              key={data.id}
+              imgUrl={data.urls.regular}
+              author={data.user.name}
+              id={data.id}
+              description={data.alt_description}
+            />
+          ))
+        )}
       </div>
     </main>
   );

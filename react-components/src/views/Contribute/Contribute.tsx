@@ -1,12 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import CardContribute from 'components/CardContribute/CardContribute';
 import FormContribute from 'components/FormContribute/FormContribute';
 import { ICardContribute } from 'components/FormContribute/FormContribute.types';
-import { AppContext } from 'contexts/AppContext';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/store';
 import './Contribute.scss';
 
 function Contribute() {
-  const { formData } = useContext(AppContext);
+  const formData = useSelector<RootState, Array<ICardContribute>>((state) => state.app.formData);
   return (
     <main className="page page-contribute">
       <h3 className="page__title">Contribute</h3>

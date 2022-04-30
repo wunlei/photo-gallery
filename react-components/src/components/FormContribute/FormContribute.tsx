@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import CheckboxInput from 'components/Input/CheckboxInput';
 import DateInput from 'components/Input/DateInput';
@@ -8,7 +8,9 @@ import FormSelect from 'components/Input/FormSelect';
 import TextInput from 'components/Input/TextInput';
 import { IFormValues } from 'components/Input/Inputs.types';
 import { getDateValidityMessage, getNameValidityMessage } from 'utils/FormValidation';
-import { AppContext } from 'contexts/AppContext';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'store/store';
+import { updateFormData } from 'store/slices/appSlice';
 import countriesList from './CountriesList';
 import './FormContribute.scss';
 
@@ -25,9 +27,11 @@ function FormContribute() {
     shouldFocusError: false,
   });
 
+  const dispatch = useDispatch<AppDispatch>();
+
   const [submitBtnText, setSubmitBtnText] = useState<string>('Submit');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
-  const { updateFormData } = useContext(AppContext);
+  const [submitted, setSubmitted] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<IFormValues> = (data) => {
     setError('name', { type: 'manual', message: getNameValidityMessage(data.name) });
@@ -36,8 +40,8 @@ function FormContribute() {
     if (data) {
       updateContributedCards(data);
       setSubmitBtnText('Successfully submitted!');
-      handleSubmitBtnUpdate();
       reset();
+      setSubmitted(true);
     }
   };
 
@@ -55,8 +59,7 @@ function FormContribute() {
       date: data.date,
       filter: data.filter,
     };
-
-    updateFormData(card);
+    dispatch(updateFormData(card));
   }
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
@@ -65,11 +68,15 @@ function FormContribute() {
     }
   }
 
-  function handleSubmitBtnUpdate() {
-    setTimeout(() => {
-      setSubmitBtnText('Submit');
-    }, 3000);
-  }
+  useEffect(() => {
+    if (submitted) {
+      const timer = setTimeout(() => {
+        setSubmitBtnText('Submit');
+        setSubmitted(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [submitted]);
 
   function checkIsCanSubmit() {
     if (Object.keys(errors).length === 0) {

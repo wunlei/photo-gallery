@@ -40,3 +40,11 @@ export interface ApiResponse {
   total_pages: number;
   results: ApiSearchData[];
 }
+
+export interface GetSearchResultsParams {
+  query: string;
+  pageNum: string;
+  pageLimit: string;
+  order: string;
+  orientation?: string;
+}

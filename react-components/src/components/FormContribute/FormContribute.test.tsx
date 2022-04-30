@@ -1,6 +1,8 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { store } from 'store/store';
 import Contribute from 'views/Contribute/Contribute';
 import countriesList from './CountriesList';
 
@@ -10,7 +12,11 @@ test('Should render error messages for required inputs', async () => {
     value: jest.fn(),
   });
 
-  render(<Contribute />);
+  render(
+    <Provider store={store}>
+      <Contribute />
+    </Provider>
+  );
 
   const submitBtn = screen.getByText(/submit/i);
   const nameInput = screen.getByLabelText(/name/i);
@@ -22,7 +28,11 @@ test('Should render error messages for required inputs', async () => {
 });
 
 test('Should render card after successful submit', async () => {
-  render(<Contribute />);
+  render(
+    <Provider store={store}>
+      <Contribute />
+    </Provider>
+  );
 
   const nameInput = screen.getByLabelText(/name/i) as HTMLInputElement;
   userEvent.type(nameInput, 'John');

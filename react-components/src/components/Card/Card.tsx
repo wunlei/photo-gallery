@@ -1,42 +1,50 @@
 import { getPhotoDetails } from 'api/Api';
 import { PropsCard } from './Card.types';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import { AppDispatch } from 'store/store';
+import { useDispatch } from 'react-redux';
+import { updatePhotoData } from 'store/slices/appSlice';
 import './Card.scss';
 
 function Card(props: PropsCard) {
   const navigate = useNavigate();
-  const { updatePhotoData } = useContext(AppContext);
+  const dispatch = useDispatch<AppDispatch>();
 
   async function togglePhotoPage() {
-    await setPhotoData();
-    navigate(`photo/${props.id}`);
+    try {
+      await setPhotoData();
+      navigate(`photo/${props.id}`);
+    } catch (err) {
+      navigate('404');
+    }
   }
 
   async function setPhotoData() {
-    const response = await getPhotoDetails(props.id);
+    try {
+      const response = await getPhotoDetails(props.id);
+      const data = {
+        downloads: response.downloads,
+        likes: response.likes,
+        location: '',
+        tags: '',
+        urls: response.urls.regular,
+        user: response.user.name,
+        alt_description: response.alt_description,
+      };
 
-    const data = {
-      downloads: response.downloads,
-      likes: response.likes,
-      location: '',
-      tags: '',
-      urls: response.urls.regular,
-      user: response.user.name,
-      alt_description: response.alt_description,
-    };
+      data.location = [response.location.city, response.location.country]
+        .filter((el) => Boolean(el))
+        .join(', ');
 
-    data.location = [response.location.city, response.location.country]
-      .filter((el) => Boolean(el))
-      .join(', ');
+      data.tags = response.tags
+        .map((el) => el.title)
+        .slice(0, 3)
+        .join(', ');
 
-    data.tags = response.tags
-      .map((el) => el.title)
-      .slice(0, 3)
-      .join(', ');
-
-    updatePhotoData(data);
+      dispatch(updatePhotoData(data));
+    } catch (err) {
+      throw new Error();
+    }
   }
 
   return (

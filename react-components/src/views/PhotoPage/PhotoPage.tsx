@@ -1,15 +1,17 @@
-import { AppContext } from 'contexts/AppContext';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as LikeIcon } from '../../assets/icons/like.svg';
 import { ReactComponent as PinIcon } from '../../assets/icons/map-pin.svg';
 import { ReactComponent as TagIcon } from '../../assets/icons/hash.svg';
 import { ReactComponent as DownloadIcon } from '../../assets/icons/download.svg';
 import './PhotoPage.scss';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/store';
+import { PhotoData } from 'components/Card/Card.types';
 
 function PhotoPage() {
   const navigate = useNavigate();
-  const { photoData } = useContext(AppContext);
+  const photoData = useSelector<RootState, PhotoData>((state) => state.app.photoData);
 
   function toShortNumber(num = 0) {
     return num.toLocaleString('en-GB', { notation: 'compact', compactDisplay: 'short' });
