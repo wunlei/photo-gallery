@@ -27,7 +27,12 @@ export async function getSearchResults(
   }
 
   return fetch(url.toString(), options)
-    .then((resp) => resp.json())
+    .then((resp) => {
+      if (resp.ok) {
+        return resp.json();
+      }
+      throw new Error(resp.statusText);
+    })
     .catch((error) => {
       throw new Error(error);
     });
@@ -43,7 +48,12 @@ export async function getPhotoDetails(id: string): Promise<ApiPhotoData> {
     },
   };
   return fetch(url.toString(), options)
-    .then((resp) => resp.json())
+    .then((resp) => {
+      if (resp.ok) {
+        return resp.json();
+      }
+      throw new Error(resp.statusText);
+    })
     .catch((error) => {
       throw new Error(error);
     });
