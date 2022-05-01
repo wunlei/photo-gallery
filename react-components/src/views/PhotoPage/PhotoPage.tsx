@@ -4,14 +4,13 @@ import { ReactComponent as LikeIcon } from '../../assets/icons/like.svg';
 import { ReactComponent as PinIcon } from '../../assets/icons/map-pin.svg';
 import { ReactComponent as TagIcon } from '../../assets/icons/hash.svg';
 import { ReactComponent as DownloadIcon } from '../../assets/icons/download.svg';
+import { useAppSelector } from 'store/store';
+import { photoDataSelector } from 'store/selectors/selectors';
 import './PhotoPage.scss';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store/store';
-import { PhotoData } from 'components/Card/Card.types';
 
 function PhotoPage() {
   const navigate = useNavigate();
-  const photoData = useSelector<RootState, PhotoData>((state) => state.app.photoData);
+  const photoData = useAppSelector(photoDataSelector);
 
   function toShortNumber(num = 0) {
     return num.toLocaleString('en-GB', { notation: 'compact', compactDisplay: 'short' });

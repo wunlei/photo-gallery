@@ -3,10 +3,10 @@ import { ApiResponse } from 'api/Api.types';
 import { PhotoData } from 'components/Card/Card.types';
 import { ICardContribute } from 'components/FormContribute/FormContribute.types';
 import { fetchPhotos } from 'store/actions/apiAction';
-import { appState } from 'store/store.types';
+import { AppState } from 'store/store.types';
 import { sortSearchData } from 'utils/sortSearchData';
 
-const initialState: appState = {
+const initialState: AppState = {
   sorting: '',
   orientation: '',
   order: 'relevant',

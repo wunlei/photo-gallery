@@ -4,9 +4,7 @@ import Loader from 'components/Loader/Loader';
 import SearchBar from 'components/SearchBar/SearchBar';
 import Select from 'components/Input/Select';
 import Pagination from 'components/Pagination/Pagination';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from 'store/store';
-import { ApiResponse } from 'api/Api.types';
+import { useAppDispatch, useAppSelector } from 'store/store';
 import { fetchPhotos } from 'store/actions/apiAction';
 import {
   updateElemCount,
@@ -19,6 +17,17 @@ import {
 } from 'store/slices/appSlice';
 import './Main.scss';
 import { sortSearchData } from 'utils/sortSearchData';
+import {
+  elemCountSelector,
+  errorSelector,
+  isLoadingSelector,
+  orderSelector,
+  orientationSelector,
+  pageNumSelector,
+  searchDataSelector,
+  searchQuerySelector,
+  sortingSelector,
+} from 'store/selectors/selectors';
 
 const selectFiltersProps = {
   sorting: {
@@ -54,22 +63,22 @@ const selectFiltersProps = {
 };
 
 function MainPage() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const isLoading = useSelector<RootState, boolean>((state) => state.app.isLoading);
+  const isLoading = useAppSelector(isLoadingSelector);
 
-  const searchData = useSelector<RootState, ApiResponse>((state) => state.app.searchData);
+  const searchData = useAppSelector(searchDataSelector);
 
   const hasSearchData = searchData.results.length > 0;
 
-  const orientation = useSelector<RootState, string>((state) => state.app.orientation);
-  const order = useSelector<RootState, string>((state) => state.app.order);
-  const sorting = useSelector<RootState, string>((state) => state.app.sorting);
-  const elemCount = useSelector<RootState, string>((state) => state.app.elemCount);
-  const pageNum = useSelector<RootState, string>((state) => state.app.pageNum);
-  const searchQuery = useSelector<RootState, string>((state) => state.app.searchQuery);
+  const orientation = useAppSelector(orientationSelector);
+  const order = useAppSelector(orderSelector);
+  const sorting = useAppSelector(sortingSelector);
+  const elemCount = useAppSelector(elemCountSelector);
+  const pageNum = useAppSelector(pageNumSelector);
+  const searchQuery = useAppSelector(searchQuerySelector);
 
-  const error = useSelector<RootState, string | undefined>((state) => state.app.error);
+  const error = useAppSelector(errorSelector);
 
   async function handleInputChange(value: string) {
     if (value) {

@@ -2,7 +2,7 @@ import { ApiResponse } from 'api/Api.types';
 import { PhotoData } from 'components/Card/Card.types';
 import { ICardContribute } from 'components/FormContribute/FormContribute.types';
 
-export interface appState {
+export interface AppState {
   sorting: string;
   orientation: string;
   order: string;

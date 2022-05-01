@@ -1,14 +1,13 @@
 import { getPhotoDetails } from 'api/Api';
 import { PropsCard } from './Card.types';
 import { useNavigate } from 'react-router-dom';
-import { AppDispatch } from 'store/store';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from 'store/store';
 import { updatePhotoData } from 'store/slices/appSlice';
 import './Card.scss';
 
 function Card(props: PropsCard) {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   async function togglePhotoPage() {
     try {

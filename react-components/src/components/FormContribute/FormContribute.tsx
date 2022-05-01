@@ -8,10 +8,9 @@ import FormSelect from 'components/Input/FormSelect';
 import TextInput from 'components/Input/TextInput';
 import { IFormValues } from 'components/Input/Inputs.types';
 import { getDateValidityMessage, getNameValidityMessage } from 'utils/FormValidation';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from 'store/store';
 import { updateFormData } from 'store/slices/appSlice';
 import countriesList from './CountriesList';
+import { useAppDispatch } from 'store/store';
 import './FormContribute.scss';
 
 function FormContribute() {
@@ -27,7 +26,7 @@ function FormContribute() {
     shouldFocusError: false,
   });
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const [submitBtnText, setSubmitBtnText] = useState<string>('Submit');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
