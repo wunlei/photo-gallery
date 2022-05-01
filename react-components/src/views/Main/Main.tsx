@@ -20,12 +20,47 @@ import {
 import './Main.scss';
 import { sortSearchData } from 'utils/sortSearchData';
 
+const selectFiltersProps = {
+  sorting: {
+    id: 'sorting',
+    name: 'sorting',
+    labelClassName: 'form-select form-input',
+    labelContent: 'Sorting',
+    data: ['likes asc.', 'likes desc.'],
+    placeholder: 'Select sorting',
+  },
+  orientation: {
+    id: 'orientation',
+    name: 'orientation',
+    labelClassName: 'form-select form-input',
+    labelContent: 'Orientation',
+    data: ['landscape', 'portrait', 'squarish'],
+    placeholder: 'Select orientation',
+  },
+  order: {
+    id: 'order',
+    name: 'order',
+    labelClassName: 'form-select form-input',
+    labelContent: 'Order',
+    data: ['latest', 'relevant'],
+  },
+  count: {
+    id: 'count',
+    name: 'count',
+    labelClassName: 'form-select form-input',
+    labelContent: 'Elements on page',
+    data: ['5', '10', '15', '20'],
+  },
+};
+
 function MainPage() {
   const dispatch = useDispatch<AppDispatch>();
 
   const isLoading = useSelector<RootState, boolean>((state) => state.app.isLoading);
 
   const searchData = useSelector<RootState, ApiResponse>((state) => state.app.searchData);
+
+  const hasSearchData = searchData.results.length > 0;
 
   const orientation = useSelector<RootState, string>((state) => state.app.orientation);
   const order = useSelector<RootState, string>((state) => state.app.order);
@@ -76,77 +111,78 @@ function MainPage() {
       <SearchBar handleInputChange={handleInputChange} />
       <div className="filters-container">
         <Select
-          labelClassName="form-select form-input"
-          labelContent="Sorting"
-          data={['likes asc.', 'likes desc.']}
-          id={''}
-          name={''}
+          id={selectFiltersProps.sorting.id}
+          name={selectFiltersProps.sorting.name}
+          labelClassName={selectFiltersProps.sorting.labelClassName}
+          labelContent={selectFiltersProps.sorting.labelContent}
+          data={selectFiltersProps.sorting.data}
           onChange={(e) => {
             dispatch(updateSorting(e.target.value));
             const data = sortSearchData(searchData.results, e.target.value);
             dispatch(updateSearchData({ ...searchData, results: data }));
           }}
-          placeholder={'Select sorting'}
+          placeholder={selectFiltersProps.sorting.placeholder}
           value={sorting}
         />
         <Select
-          labelClassName="form-select form-input"
-          labelContent="Orientation"
-          data={['landscape', 'portrait', 'squarish']}
-          id={''}
-          name={''}
+          id={selectFiltersProps.orientation.id}
+          name={selectFiltersProps.orientation.name}
+          labelClassName={selectFiltersProps.orientation.labelClassName}
+          labelContent={selectFiltersProps.orientation.labelContent}
+          data={selectFiltersProps.orientation.data}
           onChange={(e) => {
             dispatch(updateOrientation(e.target.value));
           }}
           value={orientation}
-          placeholder={'Select orientation'}
+          placeholder={selectFiltersProps.orientation.placeholder}
         />
         <Select
-          labelClassName="form-select form-input"
-          labelContent="Order"
-          data={['latest', 'relevant']}
-          id={''}
-          name={''}
+          id={selectFiltersProps.order.id}
+          name={selectFiltersProps.order.name}
+          labelClassName={selectFiltersProps.order.labelClassName}
+          labelContent={selectFiltersProps.order.labelContent}
+          data={selectFiltersProps.order.data}
           onChange={(e) => {
             dispatch(updateOrder(e.target.value));
           }}
           value={order}
         />
         <Select
-          labelClassName="form-select form-input"
-          labelContent="Elements on page"
-          data={['5', '10', '15', '20']}
-          id={''}
-          name={''}
+          id={selectFiltersProps.count.id}
+          name={selectFiltersProps.count.name}
+          labelClassName={selectFiltersProps.count.labelClassName}
+          labelContent={selectFiltersProps.count.labelContent}
+          data={selectFiltersProps.count.data}
           onChange={(e) => {
             dispatch(updateElemCount(e.target.value));
           }}
           value={elemCount}
         />
       </div>
-      <Pagination
-        currentPage={pageNum}
-        pageCount={searchData.total_pages || 1}
-        handlePageUpdate={(value) => {
-          dispatch(updatePageNumber(value));
-        }}
-      />
+
       <div className="cards-container">
-        {isLoading ? <Loader /> : null}
-        {error ? (
-          <div>Something went wrong</div>
-        ) : searchData.results.length === 0 ? (
-          <div>No results</div>
-        ) : (
-          searchData.results.map((data) => (
-            <Card
-              key={data.id}
-              imgUrl={data.urls.regular}
-              author={data.user.name}
-              id={data.id}
-              description={data.alt_description}
+        {isLoading && <Loader />}
+        {error && <div>Something went wrong</div>}
+        {!hasSearchData && !error && <div>No results</div>}
+        {hasSearchData && !error && (
+          <>
+            <Pagination
+              currentPage={pageNum}
+              pageCount={searchData.total_pages || 1}
+              handlePageUpdate={(value) => {
+                dispatch(updatePageNumber(value));
+              }}
             />
-          ))
+            {searchData.results.map((data) => (
+              <Card
+                key={data.id}
+                imgUrl={data.urls.regular}
+                author={data.user.name}
+                id={data.id}
+                description={data.alt_description}
+              />
+            ))}
+          </>
         )}
       </div>
     </main>
