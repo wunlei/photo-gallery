@@ -16,6 +16,13 @@ export interface URLData {
   regular: string;
 }
 
+export interface PhotoLinks {
+  self: string;
+  html: string;
+  download: string;
+  download_location: string;
+}
+
 export interface ApiPhotoData {
   downloads: number;
   likes: number;
@@ -24,6 +31,7 @@ export interface ApiPhotoData {
   user: UserData;
   alt_description: string;
   urls: URLData;
+  links: PhotoLinks;
 }
 
 interface LocationData {

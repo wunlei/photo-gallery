@@ -169,7 +169,7 @@ function MainPage() {
         />
       </div>
 
-      <div className="cards-container">
+      <>
         {isLoading && <Loader />}
         {error && <div>Something went wrong</div>}
         {!hasSearchData && !error && <div>No results</div>}
@@ -182,18 +182,20 @@ function MainPage() {
                 dispatch(updatePageNumber(value));
               }}
             />
-            {searchData.results.map((data) => (
-              <Card
-                key={data.id}
-                imgUrl={data.urls.regular}
-                author={data.user.name}
-                id={data.id}
-                description={data.alt_description}
-              />
-            ))}
+            <div className="cards-container">
+              {searchData.results.map((data) => (
+                <Card
+                  key={data.id}
+                  imgUrl={data.urls.regular}
+                  author={data.user.name}
+                  id={data.id}
+                  description={data.alt_description}
+                />
+              ))}
+            </div>
           </>
         )}
-      </div>
+      </>
     </main>
   );
 }

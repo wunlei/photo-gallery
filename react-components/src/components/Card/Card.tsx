@@ -29,6 +29,7 @@ function Card(props: PropsCard) {
         urls: response.urls.regular,
         user: response.user.name,
         alt_description: response.alt_description,
+        sourceLink: response.links.html,
       };
 
       data.location = [response.location.city, response.location.country]

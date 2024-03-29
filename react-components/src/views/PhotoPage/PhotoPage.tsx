@@ -38,23 +38,30 @@ function PhotoPage() {
           src={photoData.urls}
           alt={photoData.alt_description}
         />
-        <div className="card-body">
-          <div className="card__text card__author">by {photoData.user}</div>
-        </div>
+        <p className="card-body">
+          <a
+            className="card__text card__author"
+            href={photoData.sourceLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            by {photoData.user}
+          </a>
+        </p>
         <div className="card-footer">
-          <div className="card-footer__item card__location">
+          <div className="card-footer__item card__location" title="Location">
             <PinIcon className="card__icon" />
             <span className="card-footer__text card__location-text">
               {photoData.location || 'Unknown'}
             </span>
           </div>
-          <div className="card-footer__item card__likes">
+          <div className="card-footer__item card__likes" title="Likes">
             <LikeIcon className="card__icon" />
             <span className="card-footer__text card__likes-count">
               {toShortNumber(photoData.likes)}
             </span>
           </div>
-          <div className="card-footer__item card__downloads">
+          <div className="card-footer__item card__downloads" title="Downloads">
             <DownloadIcon className="card__icon" />
             <span className="card-footer__text card__downloads-count">
               {toShortNumber(photoData.downloads)}

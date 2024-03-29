@@ -18,4 +18,5 @@ export interface PhotoData {
   urls?: string;
   user?: string;
   alt_description?: string;
+  sourceLink?: string;
 }
